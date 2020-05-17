@@ -1,0 +1,30 @@
+body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+main {
+    flex: 1 0 auto;
+    padding: 25px 0;
+}
+
+.brand-logo {
+    white-space: nowrap;
+}
+
+#connection * {
+    vertical-align: middle;
+}
+
+#connection.success i {
+    color: #55ce55;
+}
+
+#connection.fail i {
+    color: #ec3b3b;
+}
+
+.input-field label {
+    color: #505050 !important;
+}
