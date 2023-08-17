@@ -26,7 +26,7 @@ function setAccount() {
         url: "https://faucet.altnet.rippletest.net/accounts",
         success: res => {
             console.log(res);
-    
+
             if (res.account) {
                 checkAccount(res.account);
             }
@@ -36,9 +36,9 @@ function setAccount() {
 
 function setBalance() {
     api.getAccountInfo(account.xAddress).then(response => {
-        console.log(response); 
-        $("#balance").text(response.xrpBalance);    
-        
+        console.log(response);
+        $("#balance").text(response.xrpBalance);
+
         if (response.xrpBalance <= 25) {
             setAccount();
         }
@@ -50,9 +50,11 @@ function checkAccount(resAccount) {
 
     setTimeout(() => {
         api.getAccountInfo(resAccount.xAddress).then(response => {
-            console.log(response);          
+            console.log(response);
             account = resAccount;
-            setInputs(true); 
+            $("#testnet_address").text(resAccount.address);
+            $("#testnet_secret").text(resAccount.secret);
+            setInputs(true);
             setBalance();
         }).catch(() => {
             checkAccount(resAccount);
@@ -61,7 +63,7 @@ function checkAccount(resAccount) {
 }
 
 api.connect().then(() => {
-    $("#send").click(() => {   
+    $("#send").click(() => {
         if (account === null) {
             M.toast({html: "Something went wrong!"});
             return;
@@ -71,22 +73,22 @@ api.connect().then(() => {
             M.toast({html: "Enter an address."});
             return;
         }
-    
+
         if (!api.isValidAddress($("#address").val())) {
             M.toast({html: "Address is not valid!"});
             return;
         }
-    
+
         if ($("#destination-tag").val() !== "" && (!$.isNumeric($("#destination-tag").val()) || parseInt($("#destination-tag").val()) > 4294967295)) {
             M.toast({html: "Destination Tag is not valid!"});
             return;
         }
-    
+
         if ($("#amount").val() === "") {
             M.toast({html: "Enter amount."});
             return;
         }
-    
+
         if (!$.isNumeric($("#amount").val())) {
             M.toast({html: "Amount is not valid!"});
             return;
@@ -110,14 +112,14 @@ api.connect().then(() => {
 
                 var sign = api.sign(prepared.txJSON, account.secret);
                 console.log(sign);
-        
+
                 api.submit(sign.signedTransaction).then(submit => {
                     console.log(submit);
-                                        
+
                     if (submit.engine_result === "tesSUCCESS") {
-                        var tr = $('#transactions tbody tr:first').clone().removeAttr('style');          
-                        tr.attr('id', submit.tx_json.hash);         
-          
+                        var tr = $('#transactions tbody tr:first').clone().removeAttr('style');
+                        tr.attr('id', submit.tx_json.hash);
+
                         $(tr).children('td').eq(0).html("<a href='https://test.bithomp.com/explorer/"+ submit.tx_json.hash +"' target='_blank'>"+ submit.tx_json.hash +"</a>");
                         $(tr).children('td').eq(1).text("false");
                         $(tr).children('td').eq(2).text(submit.resultCode);
@@ -158,7 +160,7 @@ function trackTransaction(hash) {
             } else {
                 return trackTransaction(hash);
             }
-        });    
+        });
     }, 3 * 1000);
 }
 
