@@ -79,6 +79,11 @@ api.connect().then(() => {
             return;
         }
 
+        if ($("#address").val().trim() === account.address.trim()) {
+            M.toast({html: "You can't send XRP to faucet address!"});
+            return;
+        }
+
         if ($("#destination-tag").val() !== "" && (!$.isNumeric($("#destination-tag").val()) || parseInt($("#destination-tag").val()) > 4294967295)) {
             M.toast({html: "Destination Tag is not valid!"});
             return;
